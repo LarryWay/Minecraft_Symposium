@@ -1,7 +1,7 @@
 ---
 title: "Symposium"
 author: "Larry Wei"
-date: "1/26/2023"
+date: "1/25/2023"
 format:   
   html:
     code-fold: true
@@ -45,10 +45,10 @@ flowchart LR
   D[compostable item] --> B{bone-meal}
   E[compostable item] --> B{bone-meal}
 ```
+
 ## Goal
-Find the most efficient item to compost 
 
-
+Find the most efficient item to compost
 
 # Initial Python Set Up
 
@@ -96,7 +96,6 @@ What if we graphed this data
 
 The first thing I'd like to see is the mean of items required to make a piece of bone meal
 
-
 ```{python}
 mean_series = dict(df.mean())
 mean_series = dict(sorted(mean_series.items(), key=lambda item: item[1]))
@@ -118,11 +117,6 @@ What should also be considered is the variance of required materials, i.e. what 
 
 To check the range, `.nunique()` is used, as it retrieves all unique values in the data frame per column
 
-
-
-
-
-
 ```{python}
 unique_series = dict(df.nunique())
 unique_series = dict(sorted(unique_series.items(), key=lambda item: item[1]))
@@ -142,7 +136,6 @@ plt.show()
 From this graph, we can visually see that the same items have the lowest variance
 
 So, what would the two graphs combined look like...
-
 
 ```{python}
 df_t = df[["Cookies", "Watermelons", "Apples", "Carrots", "Potatoes", "Radishes", "Pumpkins", "Wheat"]]
@@ -170,7 +163,6 @@ plt.xticks(rotation=85)
 plt.show()
 ```
 
-
 # Conclusion
 
 From this graph, it is easy to see that *cookies* are in fact the best item to compost
@@ -182,6 +174,3 @@ The item with the second lowest mean is the *beetroot*[^2], and I'd argue that i
 [^2]: *beetroot* is referes to raddish, as *raddish* doesn't actually exist in the game, and I think the creator of the dataset got mixed up
 
 ![Winner](imgs/beetroot.jpg)
-
-
-
