@@ -1,0 +1,187 @@
+---
+title: "Symposium"
+author: "Larry Wei"
+date: "1/26/2023"
+format:   
+  html:
+    code-fold: true
+---
+
+# Introduction
+
+In the hit game Minecraft, the *composter* block turns certain items into bone meal
+
+These items include...
+
+-   Apples
+-   Cactus
+-   Carrots
+-   Cookies
+-   Melons
+-   Oak leaves
+-   Oak sapplings
+-   Potatoes
+-   Pumpkins
+-   Pumpkin Seeds
+-   Sugar Cane
+-   Radish
+-   Radish Seeds
+-   Wheat
+-   Wheat Seeds
+
+![In Game Composter](imgs/composter.jpg)
+
+With enough items, the composter will will spit out bone-meal, a useful item to increase plant growth
+
+However, the specific amount is random and different per item[^1]
+
+[^1]: Compostable items, as reference from the list above
+
+```{mermaid}
+%%| fig-width: 4.5
+flowchart LR
+  A[compostable item] --> B{bone-meal}
+  C[compostable item] --> B{bone-meal}
+  D[compostable item] --> B{bone-meal}
+  E[compostable item] --> B{bone-meal}
+```
+## Goal
+Find the most efficient item to compost 
+
+
+
+# Initial Python Set Up
+
+Load libraries
+
+```{python}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+```
+
+Load csv files and merge them into one **Data Frame**
+
+```{python}
+apple_df = pd.read_csv("data/Apple_v2.csv", nrows = 500)
+cactus_df = pd.read_csv("data/Cactus_v2.csv", nrows = 500)
+carrot_df = pd.read_csv("data/Carrot_v2.csv", nrows = 500)
+cookie_df = pd.read_csv("data/Cookie_v2.csv", nrows = 500)
+melon_df = pd.read_csv("data/Melon_v2.csv", nrows = 500)
+oakleaf_df = pd.read_csv("data/Oakleaf_v2.csv", nrows = 500)
+oaksapling_df = pd.read_csv("data/Oaksapling_v2.csv", nrows = 500)
+potato_df = pd.read_csv("data/Potato_v2.csv", nrows = 500)
+pumpkin_df = pd.read_csv("data/Pumpkin_v2.csv", nrows = 500)
+pumpkinseed_df = pd.read_csv("data/Pumpkinseed_v2.csv", nrows = 500)
+radish_df = pd.read_csv("data/Radish_v2.csv", nrows = 500)
+radishseed_df = pd.read_csv("data/Radishseed_v2.csv", nrows = 500)
+sugarcane_df = pd.read_csv("data/Sugarcane_v2.csv", nrows = 500)
+wheat_df = pd.read_csv("data/Wheat_v2.csv", nrows = 500)
+wheatseed_df = pd.read_csv("data/Wheatseed_v2.csv", nrows = 500)
+
+
+df = pd.concat([apple_df, cactus_df, carrot_df, cookie_df, melon_df, oakleaf_df, oaksapling_df, potato_df, pumpkin_df, pumpkinseed_df, radish_df, radishseed_df, sugarcane_df, wheat_df, wheatseed_df], axis=1)
+
+```
+
+# Data Analysis
+
+Looking at the raw data frame, it's quite hard to extract any meaningful data
+
+```{python}
+print(df)
+```
+
+What if we graphed this data
+
+The first thing I'd like to see is the mean of items required to make a piece of bone meal
+
+
+```{python}
+mean_series = dict(df.mean())
+mean_series = dict(sorted(mean_series.items(), key=lambda item: item[1]))
+m_plant_types = mean_series.keys()
+m_plant_values = mean_series.values()
+
+plt.bar(m_plant_types, m_plant_values, color="blue")
+plt.xticks(rotation = 85)
+plt.xlabel("Minecraft Compositable Plants")
+plt.ylabel("Mean of required composite materials")
+plt.show()
+
+
+```
+
+From this data, we can deduce that *cookies*, *radishes*, *pumpkins*, *wheat*, *apples*, *potatoes*, *watermelons*, and *carrots* are the most efficient in terms of *items-per-bone-meal*
+
+What should also be considered is the variance of required materials, i.e. what is the range of required items to produce bone meal
+
+To check the range, `.nunique()` is used, as it retrieves all unique values in the data frame per column
+
+
+
+
+
+
+```{python}
+unique_series = dict(df.nunique())
+unique_series = dict(sorted(unique_series.items(), key=lambda item: item[1]))
+u_plant_types = unique_series.keys()
+u_plant_variations = unique_series.values()
+
+plt.bar(u_plant_types, u_plant_variations)
+plt.xticks(rotation=85)
+plt.xlabel("Minecraft Compositable Plants")
+plt.ylabel("Variation of composite material required")
+plt.show()
+
+
+
+```
+
+From this graph, we can visually see that the same items have the lowest variance
+
+So, what would the two graphs combined look like...
+
+
+```{python}
+df_t = df[["Cookies", "Watermelons", "Apples", "Carrots", "Potatoes", "Radishes", "Pumpkins", "Wheat"]]
+items_t = df_t.columns
+means_t = df_t.mean()
+uniques_t = df_t.nunique()
+
+x_t = np.arange(len(items_t))
+width = .35
+
+fig, ax = plt.subplots()
+m_rects = ax.bar(x_t - width/2, means_t, width, label="Mean")
+u_rects = ax.bar(x_t + width/2, uniques_t, width, label="Variance")
+
+ax.set_ylabel("Number of items")
+ax.set_xlabel("Items")
+ax.set_xticks(x_t, items_t)
+ax.legend()
+
+ax.bar_label(m_rects, padding=3)
+ax.bar_label(u_rects, padding=3)
+
+fig.tight_layout()
+plt.xticks(rotation=85)
+plt.show()
+```
+
+
+# Conclusion
+
+From this graph, it is easy to see that *cookies* are in fact the best item to compost
+
+However, cookies are not very reproduceable; therefore, they wouldn't actually be the best item to compost as the cost is simply too expensive
+
+The item with the second lowest mean is the *beetroot*[^2], and I'd argue that it's the best item to compost. Yes, watermelons, have a lower variance, but it's mean is significantly higher *in relation with competing items*
+
+[^2]: *beetroot* is referes to raddish, as *raddish* doesn't actually exist in the game, and I think the creator of the dataset got mixed up
+
+![Winner](imgs/beetroot.jpg)
+
+
+

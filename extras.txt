@@ -1,0 +1,5 @@
+Kaggle Data Set: https://www.kaggle.com/datasets/brandonconrady/minecraft-composting-dataset?resource=download
+
+lowest mean items: cookies, radishes, pumpkins, wheat, apples, potatoes, watermelons, carrots
+lowest variance items: cookies, watermelons, apples, carrots, potatoes, radishes, pumpkins, wheat
+Wanted items: Cookies, radishes, pumpkins, wheat, apples, carrots, potatoes, watermelons
